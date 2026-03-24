@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8E: Compare & Contrast — Interactive Lesson</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue-50: #E6F1FB; --blue-100: #B5D4F4;
+  --blue-600: #185FA5; --blue-800: #0C447C;
+  --green-50: #EAF3DE; --green-100: #C0DD97; --green-600: #3B6D11; --green-800: #27500A;
+  --amber-50: #FAEEDA; --amber-100: #FAC775; --amber-600: #854F0B; --amber-800: #633806;
+  --gray-50: #F5F4F0; --gray-100: #ECEAE3; --gray-200: #D3D1C7;
+  --gray-600: #5F5E5A; --gray-800: #2C2C2A;
+  --coral-50: #FAECE7; --coral-100: #F5C4B3; --coral-600: #993C1D; --coral-800: #712B13;
+}
+
+body { font-family: 'DM Sans', sans-serif; background: #F5F4F0; color: #2C2C2A; min-height: 100vh; }
+
+/* ── WELCOME ── */
+#welcomeScreen {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; padding: 24px; background: #2C2C2A;
+}
+.welcome-card {
+  background: #F5F4F0; border-radius: 16px; padding: 44px 38px;
+  max-width: 500px; width: 100%; text-align: center;
+}
+.welcome-card h1 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; margin-bottom: 4px; }
+.welcome-card .sub { font-size: 13px; color: #888780; margin-bottom: 28px; }
+.welcome-steps {
+  text-align: left; background: white; border: 1px solid #D3D1C7;
+  border-radius: 10px; padding: 14px 18px; margin-bottom: 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.ws { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #5F5E5A; }
+.wsn {
+  width: 24px; height: 24px; border-radius: 50%; font-size: 11px;
+  font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.wsn-1 { background: #E6F1FB; color: #0C447C; }
+.wsn-2 { background: #FAEEDA; color: #633806; }
+.wsn-3 { background: #EAF3DE; color: #27500A; }
+.wsn-4 { background: #EEEDFE; color: #3C3489; }
+.name-label { display: block; font-size: 13px; font-weight: 600; color: #5F5E5A; margin-bottom: 7px; text-align: left; }
+.name-row { display: flex; gap: 8px; }
+.name-row input {
+  flex: 1; padding: 11px 14px; border-radius: 8px;
+  border: 1.5px solid #D3D1C7; font-size: 15px;
+  font-family: 'DM Sans', sans-serif; background: white;
+}
+.name-row input:focus { outline: none; border-color: #185FA5; }
+.err { font-size: 12px; color: #993C1D; margin-top: 6px; text-align: left; display: none; }
+.restore-section { margin-top: 18px; padding-top: 16px; border-top: 1px solid #D3D1C7; }
+.restore-toggle { font-size: 13px; color: #185FA5; cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; text-decoration: underline; }
+.restore-area { display: none; margin-top: 10px; }
+.restore-area textarea {
+  width: 100%; padding: 10px 12px; border-radius: 8px;
+  border: 1.5px solid #D3D1C7; font-size: 12px; font-family: monospace;
+  resize: vertical; min-height: 56px; background: white;
+}
+.restore-area textarea:focus { outline: none; border-color: #185FA5; }
+.restore-btns { margin-top: 8px; display: flex; gap: 8px; }
+.saved-note { font-size: 12px; color: #3B6D11; margin-top: 8px; text-align: left; }
+
+/* ── HEADER ── */
+header {
+  background: #2C2C2A; color: #F5F4F0;
+  padding: 13px 24px; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+  position: sticky; top: 0; z-index: 100; flex-wrap: wrap;
+}
+.hd-left h1 { font-family: 'DM Serif Display', serif; font-size: 17px; font-weight: 400; }
+.hd-left p { font-size: 11px; color: #B4B2A9; margin-top: 1px; }
+.hd-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.student-chip {
+  background: #3a3a38; border: 1px solid #555553; border-radius: 100px;
+  padding: 4px 13px; font-size: 12px; color: #D3D1C7;
+}
+.student-chip span { color: #F5F4F0; font-weight: 500; }
+.save-btn {
+  padding: 5px 13px; border-radius: 100px; background: transparent;
+  border: 1px solid #555553; color: #B4B2A9; font-size: 12px;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+}
+.save-btn:hover { border-color: #B4B2A9; color: #F5F4F0; }
+.progress-nav { display: flex; gap: 4px; align-items: center; }
+.progress-step { display: flex; align-items: center; gap: 4px; }
+.step-circle {
+  width: 23px; height: 23px; border-radius: 50%; border: 1.5px solid #444441;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 500; color: #888780; flex-shrink: 0;
+}
+.step-circle.done { background: #3B6D11; border-color: #3B6D11; color: white; }
+.step-circle.active { background: #F5F4F0; border-color: #F5F4F0; color: #2C2C2A; }
+.step-label { display: none; font-size: 11px; color: #888780; }
+.step-line { width: 12px; height: 1.5px; background: #444441; }
+@media (min-width: 780px) { .step-label { display: inline; } }
+
+/* ── SAVE MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 200;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: white; border-radius: 14px; padding: 26px;
+  max-width: 460px; width: 100%; position: relative;
+}
+.modal-box h3 { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
+.modal-box p { font-size: 13px; color: #5F5E5A; line-height: 1.6; margin-bottom: 12px; }
+.save-code-box {
+  background: #F5F4F0; border: 1px solid #D3D1C7; border-radius: 8px;
+  padding: 10px 12px; font-family: monospace; font-size: 11px;
+  word-break: break-all; line-height: 1.6; margin-bottom: 12px; user-select: all;
+}
+.modal-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 19px; cursor: pointer; color: #888780; }
+.modal-note { font-size: 11px; color: #888780; margin-top: 10px; }
+
+/* ── MAIN ── */
+#appShell { display: none; }
+main { max-width: 980px; margin: 0 auto; padding: 22px 20px 80px; }
+.section { display: none; animation: fadeIn 0.3s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+
+.section-header {
+  background: white; border: 1px solid #D3D1C7; border-radius: 12px;
+  padding: 15px 20px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 13px;
+}
+.section-badge { width: 33px; height: 33px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0; }
+.badge-1 { background: #E6F1FB; color: #0C447C; }
+.badge-2 { background: #FAEEDA; color: #633806; }
+.badge-3 { background: #EAF3DE; color: #27500A; }
+.section-header h2 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+.section-header p { font-size: 13px; color: #5F5E5A; line-height: 1.5; }
+
+.hint-bar { background: #FAEEDA; border: 1px solid #FAC775; border-radius: 10px; padding: 9px 14px; font-size: 13px; color: #633806; margin-bottom: 14px; line-height: 1.5; }
+
+/* ── MATCH ── */
+.match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.match-col { display: flex; flex-direction: column; gap: 8px; }
+.match-col-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888780; margin-bottom: 3px; }
+.term-card { padding: 11px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; border: 1.5px solid #D3D1C7; background: white; cursor: grab; user-select: none; transition: box-shadow 0.12s, transform 0.12s; text-align: center; }
+.term-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.09); transform: translateY(-1px); }
+.def-target { padding: 13px 14px; border-radius: 10px; font-size: 13px; color: #5F5E5A; border: 2px dashed #D3D1C7; background: #F5F4F0; min-height: 58px; display: flex; align-items: center; transition: border-color 0.15s, background 0.15s; line-height: 1.5; }
+.def-target.drag-over { border-color: #378ADD; background: #E6F1FB44; }
+.def-target.filled-compare { background: #E6F1FB; border: 2px solid #B5D4F4; color: #0C447C; font-weight: 500; font-size: 15px; justify-content: center; }
+.def-target.filled-contrast { background: #FAECE7; border: 2px solid #F5C4B3; color: #712B13; font-weight: 500; font-size: 15px; justify-content: center; }
+
+/* ── SYNONYM ── */
+.syn-board { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.syn-col-header { font-size: 14px; font-weight: 600; text-align: center; padding: 9px; border-radius: 8px; margin-bottom: 7px; }
+.syn-col-compare .syn-col-header { background: #E6F1FB; color: #0C447C; }
+.syn-col-contrast .syn-col-header { background: #FAECE7; color: #712B13; }
+.syn-drop { min-height: 100px; border: 2px dashed #D3D1C7; border-radius: 10px; padding: 9px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; background: white; transition: border-color 0.15s; }
+.syn-drop.drag-over { border-color: #378ADD; background: #E6F1FB22; }
+.syn-bank { background: white; border: 1px solid #D3D1C7; border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+.syn-word { display: inline-block; padding: 6px 13px; border-radius: 100px; font-size: 13px; border: 1px solid #D3D1C7; background: white; cursor: grab; user-select: none; transition: box-shadow 0.12s, transform 0.12s; }
+.syn-word:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.syn-word.in-compare { background: #E6F1FB; border-color: #B5D4F4; color: #0C447C; }
+.syn-word.in-contrast { background: #FAECE7; border-color: #F5C4B3; color: #712B13; }
+
+/* ── BOARD ── */
+.word-bank-section { background: white; border: 1px solid #D3D1C7; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; }
+.section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888780; margin-bottom: 9px; }
+.words-container { display: flex; flex-wrap: wrap; gap: 7px; min-height: 36px; }
+.board { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.col-header { font-size: 13px; font-weight: 600; text-align: center; padding: 8px 9px; border-radius: 8px; margin-bottom: 7px; }
+.col-us .col-header, .col-a .col-header { background: #E6F1FB; color: #0C447C; }
+.col-both .col-header { background: #FAEEDA; color: #633806; }
+.col-sov .col-header, .col-b .col-header { background: #FAECE7; color: #712B13; }
+.drop-zone { min-height: 170px; border: 2px dashed #D3D1C7; border-radius: 12px; padding: 9px; display: flex; flex-direction: column; gap: 6px; background: white; transition: border-color 0.15s, background 0.15s; }
+.drop-zone.drag-over { border-color: #378ADD; background: #E6F1FB33; }
+.card { padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; cursor: grab; border: 1px solid #D3D1C7; background: white; color: #2C2C2A; user-select: none; transition: transform 0.1s, box-shadow 0.1s; }
+.card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.card:active { cursor: grabbing; opacity: 0.75; }
+.card.in-a, .card.in-us { background: #E6F1FB; border-color: #B5D4F4; color: #0C447C; }
+.card.in-b, .card.in-sov { background: #FAECE7; border-color: #F5C4B3; color: #712B13; }
+.card.in-both { background: #FAEEDA; border-color: #FAC775; color: #633806; }
+
+/* ── PASSAGE ── */
+.passage { background: white; border: 1px solid #D3D1C7; border-left: 4px solid #378ADD; border-radius: 0 10px 10px 0; padding: 13px 16px; margin-bottom: 14px; font-size: 14px; line-height: 1.75; }
+.passage strong { font-weight: 600; display: block; margin-bottom: 5px; font-size: 15px; }
+.reading-tabs { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.reading-tab { padding: 6px 14px; border-radius: 100px; font-size: 13px; border: 1px solid #D3D1C7; background: white; color: #5F5E5A; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.reading-tab.active { background: #2C2C2A; color: white; border-color: #2C2C2A; }
+.reading-tab.completed { background: #EAF3DE; border-color: #C0DD97; color: #27500A; }
+.reading-tab.locked { opacity: 0.4; cursor: not-allowed; }
+.reading-panel { display: none; }
+.reading-panel.active { display: block; animation: fadeIn 0.25s ease; }
+
+/* ── CONTROLS ── */
+.controls { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; margin-top: 3px; }
+.btn-primary { padding: 9px 19px; border-radius: 8px; border: none; background: #2C2C2A; color: #F5F4F0; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; }
+.btn-primary:hover { background: #444441; }
+.btn-secondary { padding: 9px 15px; border-radius: 8px; border: 1px solid #D3D1C7; background: white; color: #5F5E5A; font-size: 14px; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+.btn-secondary:hover { background: #F5F4F0; }
+.btn-next { padding: 9px 19px; border-radius: 8px; border: none; background: #185FA5; color: white; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; display: none; }
+.btn-next:hover { background: #0C447C; }
+.score-pill { display: none; padding: 5px 12px; border-radius: 100px; font-size: 13px; font-weight: 600; background: #EAF3DE; color: #27500A; border: 1px solid #C0DD97; }
+.feedback { display: none; margin-top: 11px; padding: 10px 14px; border-radius: 10px; font-size: 14px; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.great { background: #EAF3DE; color: #27500A; border: 1px solid #C0DD97; }
+.feedback.partial { background: #FAEEDA; color: #633806; border: 1px solid #FAC775; }
+.feedback.low { background: #FAECE7; color: #712B13; border: 1px solid #F5C4B3; }
+
+/* ── CERT ── */
+#certSection { text-align: center; padding: 8px 0; }
+.cert-name-row { display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 18px; flex-wrap: wrap; }
+.cert-name-row input { padding: 10px 15px; border-radius: 8px; border: 1px solid #D3D1C7; font-size: 15px; font-family: 'DM Sans', sans-serif; width: 270px; }
+.cert-name-row input:focus { outline: 2px solid #185FA5; border-color: #185FA5; }
+#certCanvas { border: 1px solid #D3D1C7; border-radius: 12px; max-width: 100%; margin: 0 auto 18px; display: block; }
+
+@media (max-width: 600px) {
+  header { padding: 11px 14px; }
+  .board { grid-template-columns: 1fr; }
+  .match-grid, .syn-board { grid-template-columns: 1fr; }
+  main { padding: 12px 12px 60px; }
+  .welcome-card { padding: 28px 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ WELCOME SCREEN ══════════ -->
+<div id="welcomeScreen">
+  <div class="welcome-card">
+    <h1>8E: Compare &amp; Contrast</h1>
+    <p class="sub">ELL Level 1 · Cold War Unit</p>
+
+    <div class="welcome-steps">
+      <div class="ws"><div class="wsn wsn-1">1</div>Vocabulary: Compare &amp; Contrast</div>
+      <div class="ws"><div class="wsn wsn-2">2</div>Practice: City vs. Countryside</div>
+      <div class="ws"><div class="wsn wsn-3">3</div>Assignment 8E: US vs. Soviet Union (4 readings)</div>
+      <div class="ws"><div class="wsn wsn-4">★</div>Download your completion certificate</div>
+    </div>
+
+    <label class="name-label" for="welcomeName">Your full name</label>
+    <div class="name-row">
+      <input type="text" id="welcomeName" placeholder="First and last name..." autocomplete="name"
+        onkeydown="if(event.key==='Enter') startLesson()">
+      <button class="btn-primary" onclick="startLesson()">Start →</button>
+    </div>
+    <div class="err" id="nameError">Please type your name before starting.</div>
+    <div id="savedNote"></div>
+
+    <div class="restore-section">
+      <button class="restore-toggle" onclick="toggleRestore()">Have a save code? Click here to restore your progress</button>
+      <div class="restore-area" id="restoreArea">
+        <textarea id="restoreCode" placeholder="Paste your save code here..."></textarea>
+        <div class="restore-btns">
+          <button class="btn-primary" onclick="restoreFromCode()">Restore progress</button>
+        </div>
+        <div class="err" id="restoreError" style="display:none;">Invalid save code. Please check and try again.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SAVE MODAL ══════════ -->
+<div class="modal-overlay" id="saveModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeSaveModal()">✕</button>
+    <h3>Save your progress</h3>
+    <p>Copy this code and save it somewhere safe — email it to yourself, paste it in Google Docs, or write it in your notes. Next time, click "Have a save code?" on the welcome screen and paste it back in.</p>
+    <div class="save-code-box" id="saveCodeDisplay"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-primary" id="copyBtn" onclick="copySaveCode()">Copy code</button>
+      <button class="btn-secondary" onclick="closeSaveModal()">Close</button>
+    </div>
+    <p class="modal-note">Your progress is also saved automatically in this browser. The code lets you continue on a different computer.</p>
+  </div>
+</div>
+
+<!-- ══════════ APP SHELL ══════════ -->
+<div id="appShell">
+  <header>
+    <div class="hd-left">
+      <h1>8E: Compare &amp; Contrast</h1>
+      <p>ELL Level 1 — Interactive Lesson</p>
+    </div>
+    <div class="hd-right">
+      <div class="student-chip">Student: <span id="headerName">—</span></div>
+      <button class="save-btn" onclick="openSaveModal()">Save progress</button>
+      <div class="progress-nav">
+        <div class="progress-step"><div class="step-circle active" id="sc1">1</div><span class="step-label">Vocabulary</span></div>
+        <div class="step-line"></div>
+        <div class="progress-step"><div class="step-circle" id="sc2">2</div><span class="step-label">Practice</span></div>
+        <div class="step-line"></div>
+        <div class="progress-step"><div class="step-circle" id="sc3">3</div><span class="step-label">8E</span></div>
+        <div class="step-line"></div>
+        <div class="progress-step"><div class="step-circle" id="sc4">★</div><span class="step-label">Certificate</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- PART 1 -->
+    <div class="section active" id="sec1">
+      <div class="section-header">
+        <div class="section-badge badge-1">1</div>
+        <div><h2>Vocabulary: Compare &amp; Contrast</h2><p>Complete both activities below, then check your answers to move on.</p></div>
+      </div>
+
+      <div style="background:white;border:1px solid #D3D1C7;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+        <div class="section-label" style="margin-bottom:9px;">Part A — Match each word to its definition</div>
+        <div class="hint-bar">Drag the word on the left to match the correct definition on the right.</div>
+        <div class="match-grid">
+          <div class="match-col">
+            <div class="match-col-label">Words</div>
+            <div class="term-card" id="termCompare" draggable="true" ondragstart="matchDragStart('compare')">Compare</div>
+            <div class="term-card" id="termContrast" draggable="true" ondragstart="matchDragStart('contrast')">Contrast</div>
+          </div>
+          <div class="match-col">
+            <div class="match-col-label">Definitions</div>
+            <div class="def-target" id="defA" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="matchDrop(event,'defA')" data-answer="contrast">To find how two things are <strong>different</strong> from each other.</div>
+            <div class="def-target" id="defB" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="matchDrop(event,'defB')" data-answer="compare">To find how two things are <strong>similar</strong> or the same.</div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn-primary" onclick="checkMatch()">Check</button>
+          <button class="btn-secondary" onclick="resetMatch()">Reset</button>
+          <span class="score-pill" id="matchScore"></span>
+        </div>
+        <div class="feedback" id="matchFeedback"></div>
+      </div>
+
+      <div style="background:white;border:1px solid #D3D1C7;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+        <div class="section-label" style="margin-bottom:9px;">Part B — Sort the words into the correct group</div>
+        <div class="hint-bar">These words mean the same as Compare or Contrast. Drag each word to the correct column.</div>
+        <div class="syn-bank">
+          <div class="section-label">Word bank</div>
+          <div class="words-container" id="synBank" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="synDrop(event,'bank')"></div>
+        </div>
+        <div class="syn-board">
+          <div class="syn-col-compare">
+            <div class="syn-col-header">Compare</div>
+            <div class="syn-drop" id="synCompare" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="synDrop(event,'compare')"></div>
+          </div>
+          <div class="syn-col-contrast">
+            <div class="syn-col-header">Contrast</div>
+            <div class="syn-drop" id="synContrast" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="synDrop(event,'contrast')"></div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn-primary" onclick="checkSyn()">Check</button>
+          <button class="btn-secondary" onclick="resetSyn()">Reset</button>
+          <span class="score-pill" id="synScore"></span>
+        </div>
+        <div class="feedback" id="synFeedback"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn-next" id="btn1to2" onclick="goTo(2)">Next: Practice Activity →</button>
+      </div>
+    </div>
+
+    <!-- PART 2 -->
+    <div class="section" id="sec2">
+      <div class="section-header">
+        <div class="section-badge badge-2">2</div>
+        <div><h2>Practice: City vs. Countryside</h2><p>Sort each phrase into the correct column. Get at least 10 out of 14 correct to move on.</p></div>
+      </div>
+      <div class="hint-bar">Read each card carefully. Does it describe only the city, only the countryside, or both?</div>
+      <div class="word-bank-section">
+        <div class="section-label">Word bank — drag each card to the correct column</div>
+        <div class="words-container" id="p2bank" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="p2Drop(event,'bank')"></div>
+      </div>
+      <div class="board">
+        <div class="col-a">
+          <div class="col-header">Only: City</div>
+          <div class="drop-zone" id="p2zoneA" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="p2Drop(event,'a')"></div>
+        </div>
+        <div class="col-both">
+          <div class="col-header">Both</div>
+          <div class="drop-zone" id="p2zoneBoth" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="p2Drop(event,'both')"></div>
+        </div>
+        <div class="col-b">
+          <div class="col-header">Only: Countryside</div>
+          <div class="drop-zone" id="p2zoneB" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="p2Drop(event,'b')"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn-primary" onclick="checkP2()">Check my answers</button>
+        <button class="btn-secondary" onclick="resetP2()">Reset</button>
+        <span class="score-pill" id="p2Score"></span>
+      </div>
+      <div class="feedback" id="p2Feedback"></div>
+      <div class="controls" style="margin-top:11px;">
+        <button class="btn-next" id="btn2to3" onclick="goTo(3)">Next: Assignment 8E →</button>
+      </div>
+    </div>
+
+    <!-- PART 3 -->
+    <div class="section" id="sec3">
+      <div class="section-header">
+        <div class="section-badge badge-3">3</div>
+        <div><h2>Assignment 8E — US vs. Soviet Union</h2><p>Read each paragraph. Sort the phrases into the correct columns. Complete all 4 readings to earn your certificate.</p></div>
+      </div>
+      <div class="reading-tabs" id="readingTabs">
+        <button class="reading-tab active" id="rtab0" onclick="showReading(0)">1. Communism vs. Capitalism</button>
+        <button class="reading-tab locked" id="rtab1">2. Arms Race</button>
+        <button class="reading-tab locked" id="rtab2">3. Space Race</button>
+        <button class="reading-tab locked" id="rtab3">4. Proxy Wars</button>
+      </div>
+      <div id="readingPanels"></div>
+      <div class="controls" style="margin-top:14px;">
+        <button class="btn-next" id="btn3to4" onclick="goTo(4)">Get My Certificate →</button>
+      </div>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div class="section" id="sec4">
+      <div class="section-header">
+        <div class="section-badge" style="background:#FAEEDA;color:#633806;font-size:17px;">★</div>
+        <div><h2>You finished Assignment 8E!</h2><p>Your name is already filled in. Download your certificate and upload it to Canvas.</p></div>
+      </div>
+      <div id="certSection">
+        <div class="cert-name-row">
+          <input type="text" id="studentName" placeholder="Your name..." oninput="drawCert()">
+          <button class="btn-primary" onclick="downloadCert()">Download Certificate</button>
+        </div>
+        <canvas id="certCanvas" width="820" height="580"></canvas>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ══════════ STATE ══════════ */
+let studentName = '';
+const appState = {
+  currentSection: 1,
+  matchDone: false, synDone: false, part1Done: false, part2Done: false,
+  readingsDone: [false,false,false,false],
+  matchState: { defA: null, defB: null },
+  synState: {}, p2State: {},
+  rStates: [{},{},{},{}],
+  rUnlocked: [true,false,false,false],
+  currentReading: 0
+};
+
+/* ══════════ WELCOME ══════════ */
+function startLesson() {
+  const v = document.getElementById('welcomeName').value.trim();
+  if (!v) { document.getElementById('nameError').style.display = 'block'; return; }
+  studentName = v;
+  launchApp();
+}
+
+function launchApp() {
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'block';
+  document.getElementById('headerName').textContent = studentName;
+  document.getElementById('studentName').value = studentName;
+  initSyn(); initP2(); buildReadingPanels();
+  restoreUI();
+  autoSave();
+}
+
+function toggleRestore() {
+  const a = document.getElementById('restoreArea');
+  a.style.display = a.style.display === 'block' ? 'none' : 'block';
+}
+
+/* ══════════ SAVE / RESTORE ══════════ */
+const SAVE_KEY = '8e_lesson_v2';
+
+function buildPayload() {
+  return { v:2, name:studentName, s:appState.currentSection,
+    m:appState.matchDone, sy:appState.synDone, p1:appState.part1Done, p2d:appState.part2Done,
+    rd:appState.readingsDone, ms:appState.matchState, ss:appState.synState,
+    ps:appState.p2State, rs:appState.rStates, ru:appState.rUnlocked, cr:appState.currentReading };
+}
+
+function applyPayload(d) {
+  if (!d || d.v !== 2) return false;
+  studentName = d.name || '';
+  appState.currentSection = d.s || 1;
+  appState.matchDone = !!d.m; appState.synDone = !!d.sy;
+  appState.part1Done = !!d.p1; appState.part2Done = !!d.p2d;
+  appState.readingsDone = d.rd || [false,false,false,false];
+  appState.matchState = d.ms || { defA:null, defB:null };
+  appState.synState = d.ss || {}; appState.p2State = d.ps || {};
+  appState.rStates = d.rs || [{},{},{},{}];
+  appState.rUnlocked = d.ru || [true,false,false,false];
+  appState.currentReading = d.cr || 0;
+  return true;
+}
+
+function autoSave() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(buildPayload())); } catch(e) {}
+}
+
+function openSaveModal() {
+  autoSave();
+  document.getElementById('saveCodeDisplay').textContent = btoa(JSON.stringify(buildPayload()));
+  document.getElementById('saveModal').classList.add('open');
+}
+function closeSaveModal() { document.getElementById('saveModal').classList.remove('open'); }
+
+function copySaveCode() {
+  const text = document.getElementById('saveCodeDisplay').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const b = document.getElementById('copyBtn');
+    b.textContent = 'Copied!';
+    setTimeout(() => b.textContent = 'Copy code', 2000);
+  }).catch(() => {
+    const el = document.getElementById('saveCodeDisplay');
+    const range = document.createRange(); range.selectNode(el);
+    window.getSelection().removeAllRanges(); window.getSelection().addRange(range);
+  });
+}
+
+function restoreFromCode() {
+  try {
+    const d = JSON.parse(atob(document.getElementById('restoreCode').value.trim()));
+    if (!applyPayload(d)) throw new Error();
+    document.getElementById('welcomeName').value = studentName;
+    launchApp();
+  } catch(e) {
+    document.getElementById('restoreError').style.display = 'block';
+  }
+}
+
+window.addEventListener('load', () => {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d && d.name && d.v === 2) {
+      applyPayload(d);
+      document.getElementById('welcomeName').value = studentName;
+      const note = document.getElementById('savedNote');
+      note.className = 'saved-note';
+      note.textContent = '✓ Progress found for ' + studentName + '. Press Start to continue where you left off.';
+    }
+  } catch(e) {}
+});
+
+/* ══════════ NAVIGATION ══════════ */
+function goTo(n) {
+  appState.currentSection = n;
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec' + n).classList.add('active');
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('sc' + i);
+    el.className = 'step-circle';
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  });
+  if (n === 4) { document.getElementById('studentName').value = studentName; setTimeout(drawCert, 120); }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  autoSave();
+}
+
+function restoreUI() {
+  goTo(appState.currentSection);
+  renderMatch();
+  renderSyn();
+  renderP2();
+  if (appState.part1Done) document.getElementById('btn1to2').style.display = 'inline-block';
+  if (appState.part2Done) document.getElementById('btn2to3').style.display = 'inline-block';
+  updateReadingTabs();
+  showReadingQuiet(appState.currentReading);
+  checkAllReadings();
+}
+
+function checkAllPart1() {
+  if (appState.matchDone && appState.synDone) {
+    appState.part1Done = true;
+    document.getElementById('btn1to2').style.display = 'inline-block';
+  }
+}
+
+/* ══════════ PART 1A — MATCH ══════════ */
+let matchDrag = null;
+function matchDragStart(t) { matchDrag = t; }
+function matchDrop(e, id) {
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  if (!matchDrag) return;
+  appState.matchState[id] = matchDrag; matchDrag = null;
+  renderMatch(); autoSave();
+}
+function renderMatch() {
+  ['defA','defB'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    const v = appState.matchState[id];
+    el.className = 'def-target';
+    if (v) { el.className = 'def-target filled-' + v; el.textContent = v === 'compare' ? 'Compare' : 'Contrast'; }
+    else { el.innerHTML = id==='defA' ? 'To find how two things are <strong>different</strong> from each other.' : 'To find how two things are <strong>similar</strong> or the same.'; }
+  });
+  ['termCompare','termContrast'].forEach(id => {
+    const term = id==='termCompare'?'compare':'contrast';
+    const used = Object.values(appState.matchState).includes(term);
+    const el = document.getElementById(id); if (el) { el.style.opacity = used?'0.35':'1'; el.draggable = !used; }
+  });
+}
+function checkMatch() {
+  const ok = appState.matchState.defA==='contrast' && appState.matchState.defB==='compare';
+  const score = (appState.matchState.defA==='contrast'?1:0)+(appState.matchState.defB==='compare'?1:0);
+  const pill = document.getElementById('matchScore');
+  pill.textContent = score+' / 2 correct'; pill.style.display = 'inline-block';
+  const fb = document.getElementById('matchFeedback');
+  if (ok) { fb.textContent='Perfect! Compare = find similarities. Contrast = find differences. Remember these!'; fb.className='feedback show great'; appState.matchDone=true; checkAllPart1(); }
+  else { fb.textContent='Not quite. "Compare" means look for things that are the same. "Contrast" means look for things that are different. Try again!'; fb.className='feedback show low'; }
+  autoSave();
+}
+function resetMatch() {
+  appState.matchState={defA:null,defB:null}; renderMatch();
+  document.getElementById('matchFeedback').className='feedback';
+  document.getElementById('matchScore').style.display='none'; autoSave();
+}
+
+/* ══════════ PART 1B — SYNONYMS ══════════ */
+const synonyms=[
+  {word:'similar',zone:'compare'},{word:'same',zone:'compare'},
+  {word:'alike',zone:'compare'},{word:'both',zone:'compare'},
+  {word:'different',zone:'contrast'},{word:'unlike',zone:'contrast'},
+  {word:'opposite',zone:'contrast'},{word:'however',zone:'contrast'},
+];
+let synDrag=null;
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function initSyn(){synonyms.forEach(s=>{if(!appState.synState[s.word])appState.synState[s.word]='bank';});renderSyn();}
+function renderSyn(){
+  ['synBank','synCompare','synContrast'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  shuffle(synonyms).forEach(s=>{
+    const zone=appState.synState[s.word];
+    const el=document.createElement('span');
+    el.className='syn-word'+(zone!=='bank'?' in-'+zone:'');
+    el.textContent=s.word; el.draggable=true;
+    el.ondragstart=()=>{synDrag=s.word;};
+    const t=zone==='compare'?'synCompare':zone==='contrast'?'synContrast':'synBank';
+    document.getElementById(t).appendChild(el);
+  });
+}
+function synDrop(e,zone){
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  if(!synDrag)return; appState.synState[synDrag]=zone; synDrag=null;
+  renderSyn(); document.getElementById('synFeedback').className='feedback';
+  document.getElementById('synScore').style.display='none'; autoSave();
+}
+function checkSyn(){
+  let c=0; synonyms.forEach(s=>{if(appState.synState[s.word]===s.zone)c++;});
+  const t=synonyms.length, pill=document.getElementById('synScore'), fb=document.getElementById('synFeedback');
+  pill.textContent=c+' / '+t+' correct'; pill.style.display='inline-block';
+  if(c===t){fb.textContent='Excellent! You know all the Compare and Contrast signal words. These help you identify what to look for when you read.';fb.className='feedback show great';appState.synDone=true;checkAllPart1();}
+  else if(c>=5){fb.textContent='Almost there! '+(t-c)+' word(s) are in the wrong column. Words like "similar" and "alike" go with Compare. Words like "different" and "unlike" go with Contrast.';fb.className='feedback show partial';}
+  else{fb.textContent='Keep trying! Compare words describe things that are the same. Contrast words describe things that are different.';fb.className='feedback show low';}
+  autoSave();
+}
+function resetSyn(){
+  synonyms.forEach(s=>appState.synState[s.word]='bank'); renderSyn();
+  document.getElementById('synFeedback').className='feedback';
+  document.getElementById('synScore').style.display='none'; autoSave();
+}
+
+/* ══════════ PART 2 ══════════ */
+const p2Cards=shuffle([
+  {text:'lots of tall buildings',zone:'a'},
+  {text:'public transportation like buses and trains',zone:'a'},
+  {text:'many different job options',zone:'a'},
+  {text:'busy streets with lots of traffic',zone:'a'},
+  {text:'stores and shops on every block',zone:'a'},
+  {text:'fresh air and open nature',zone:'b'},
+  {text:'wide open spaces',zone:'b'},
+  {text:'fewer people live there',zone:'b'},
+  {text:'farming and animals are common',zone:'b'},
+  {text:'quiet and peaceful environment',zone:'b'},
+  {text:'people live and work there',zone:'both'},
+  {text:'has schools and hospitals',zone:'both'},
+  {text:'uses electricity and running water',zone:'both'},
+  {text:'has weather and seasons',zone:'both'},
+]);
+
+function initP2(){p2Cards.forEach(c=>{if(!appState.p2State[c.text])appState.p2State[c.text]='bank';});renderP2();}
+function renderP2(){
+  ['p2bank','p2zoneA','p2zoneBoth','p2zoneB'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  p2Cards.forEach(c=>{
+    const zone=appState.p2State[c.text];
+    const el=makeCard(c.text,zone,'p2Drag');
+    const t=zone==='a'?'p2zoneA':zone==='b'?'p2zoneB':zone==='both'?'p2zoneBoth':'p2bank';
+    document.getElementById(t).appendChild(el);
+  });
+}
+function makeCard(text,zone,dtype){
+  const el=document.createElement('div');
+  const cls=zone==='a'||zone==='us'?'in-a':zone==='b'||zone==='sov'?'in-b':zone==='both'?'in-both':'';
+  el.className='card'+(cls?' '+cls:''); el.textContent=text; el.draggable=true;
+  el.ondragstart=e=>{e.dataTransfer.setData('ct',text);e.dataTransfer.setData('dt',dtype);};
+  return el;
+}
+function p2Drop(e,zone){
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  const text=e.dataTransfer.getData('ct'), dt=e.dataTransfer.getData('dt');
+  if(!text||dt!=='p2Drag')return;
+  appState.p2State[text]=zone; renderP2();
+  document.getElementById('p2Feedback').className='feedback';
+  document.getElementById('p2Score').style.display='none';
+  document.getElementById('btn2to3').style.display='none'; autoSave();
+}
+function checkP2(){
+  let c=0; p2Cards.forEach(x=>{if(appState.p2State[x.text]===x.zone)c++;});
+  const t=p2Cards.length, pill=document.getElementById('p2Score'), fb=document.getElementById('p2Feedback');
+  pill.textContent=c+' / '+t+' correct'; pill.style.display='inline-block';
+  if(c>=10){
+    fb.textContent=c===t?'Perfect score! You are ready for the real assignment. Click Next to continue.':'Great work! '+c+' out of '+t+' correct. That\'s enough to move on. Click Next when you\'re ready.';
+    fb.className='feedback show great'; document.getElementById('btn2to3').style.display='inline-block'; appState.part2Done=true;
+  } else if(c>=6){fb.textContent='Good try! You need at least 10 correct to move on. Re-read each card — if both the city AND countryside have it, put it in "Both."';fb.className='feedback show partial';}
+  else{fb.textContent='Keep going! City = things only in a city. Countryside = only in the countryside. Both = found in both places.';fb.className='feedback show low';}
+  autoSave();
+}
+function resetP2(){
+  p2Cards.forEach(c=>appState.p2State[c.text]='bank'); renderP2();
+  document.getElementById('p2Feedback').className='feedback';
+  document.getElementById('p2Score').style.display='none';
+  document.getElementById('btn2to3').style.display='none'; autoSave();
+}
+
+/* ══════════ PART 3 ══════════ */
+const readings=[
+  {title:'1. Communism vs. Capitalism',
+   passage:'The U.S. and the Soviet Union had different ideas about how people should live. The U.S. believed in capitalism. In capitalism, people can own land and businesses, and they can make money. The Soviet Union believed in communism. In communism, the government owns everything, and everyone is supposed to be equal. Both countries wanted to spread their ideas to other places.',
+   colA:'United States',colB:'Soviet Union',
+   cards:shuffle([
+     {text:'believed in capitalism',zone:'us'},{text:'people can own land and businesses',zone:'us'},
+     {text:'people can make money',zone:'us'},{text:'believed in communism',zone:'sov'},
+     {text:'the government owns everything',zone:'sov'},{text:'everyone is supposed to be equal',zone:'sov'},
+     {text:'wanted to spread their ideas',zone:'both'},{text:'was a powerful country',zone:'both'},
+   ])},
+  {title:'2. Arms Race',
+   passage:'During the Cold War, the U.S. and the Soviet Union competed to build the strongest weapons. Both countries made many nuclear bombs and missiles. This made people afraid of a big war. The U.S. spent a lot of money on its military and had bases around the world. The Soviet Union focused on building weapons at home and keeping control of Eastern Europe.',
+   colA:'United States',colB:'Soviet Union',
+   cards:shuffle([
+     {text:'spent a lot of money on the military',zone:'us'},{text:'had military bases around the world',zone:'us'},
+     {text:'focused on building weapons at home',zone:'sov'},{text:'kept control of Eastern Europe',zone:'sov'},
+     {text:'made nuclear bombs and missiles',zone:'both'},{text:'competed to build the strongest weapons',zone:'both'},
+     {text:'made people afraid of a big war',zone:'both'},
+   ])},
+  {title:'3. Space Race',
+   passage:'The U.S. and the Soviet Union also competed in space. Both wanted to be the first to do big things in space. The Soviet Union launched the first satellite, Sputnik, in 1957. This made the U.S. work harder. In 1969, the U.S. sent the first man to the moon. Both countries used space to show their science and power.',
+   colA:'United States',colB:'Soviet Union',
+   cards:shuffle([
+     {text:'sent the first man to the moon (1969)',zone:'us'},{text:'worked harder after Sputnik launched',zone:'us'},
+     {text:'launched the first satellite — Sputnik (1957)',zone:'sov'},{text:'was first to reach a major space goal',zone:'sov'},
+     {text:'competed in the space race',zone:'both'},{text:'used space to show science and power',zone:'both'},
+     {text:'wanted to be first in space',zone:'both'},
+   ])},
+  {title:'4. Proxy Wars',
+   passage:'The U.S. and the Soviet Union never fought each other directly. But they supported other countries in smaller wars, called proxy wars. In Korea, the U.S. helped the South, and the Soviet Union helped the North. In Vietnam, the U.S. fought to stop communism. The Soviet Union gave support to the other side. Both sides used money, weapons, and soldiers to help their allies.',
+   colA:'United States',colB:'Soviet Union',
+   cards:shuffle([
+     {text:'helped South Korea',zone:'us'},{text:'fought in Vietnam to stop communism',zone:'us'},
+     {text:'helped North Korea',zone:'sov'},{text:'supported the communist side in Vietnam',zone:'sov'},
+     {text:'never fought each other directly',zone:'both'},{text:'supported other countries in proxy wars',zone:'both'},
+     {text:'used money, weapons, and soldiers for allies',zone:'both'},
+   ])},
+];
+
+function buildReadingPanels(){
+  const container=document.getElementById('readingPanels');
+  if(!container)return; container.innerHTML='';
+  readings.forEach((r,idx)=>{
+    if(!appState.rStates[idx]||Object.keys(appState.rStates[idx]).length===0){
+      appState.rStates[idx]={};
+      r.cards.forEach(c=>appState.rStates[idx][c.text]='bank');
+    }
+    const panel=document.createElement('div');
+    panel.className='reading-panel'; panel.id='rpanel'+idx;
+    panel.innerHTML=`
+      <div class="passage"><strong>${r.title}</strong>${r.passage}</div>
+      <div class="hint-bar">Read the paragraph above. Then drag each phrase to the correct column: <strong>${r.colA}</strong>, <strong>Both</strong>, or <strong>${r.colB}</strong>.</div>
+      <div class="word-bank-section"><div class="section-label">Word bank</div>
+        <div class="words-container" id="rbank${idx}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="rDrop(event,${idx},'bank')"></div>
+      </div>
+      <div class="board">
+        <div class="col-us"><div class="col-header">${r.colA}</div>
+          <div class="drop-zone" id="rzoneUS${idx}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="rDrop(event,${idx},'us')"></div>
+        </div>
+        <div class="col-both"><div class="col-header">Both</div>
+          <div class="drop-zone" id="rzoneBoth${idx}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="rDrop(event,${idx},'both')"></div>
+        </div>
+        <div class="col-sov"><div class="col-header">${r.colB}</div>
+          <div class="drop-zone" id="rzoneSOV${idx}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="rDrop(event,${idx},'sov')"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn-primary" onclick="checkReading(${idx})">Check my answers</button>
+        <button class="btn-secondary" onclick="resetReading(${idx})">Reset</button>
+        <span class="score-pill" id="rscore${idx}"></span>
+      </div>
+      <div class="feedback" id="rfeedback${idx}"></div>`;
+    container.appendChild(panel);
+    renderReading(idx);
+  });
+}
+
+function renderReading(idx){
+  const r=readings[idx], s=appState.rStates[idx]||{};
+  ['rbank','rzoneUS','rzoneBoth','rzoneSOV'].forEach(b=>{const el=document.getElementById(b+idx);if(el)el.innerHTML='';});
+  r.cards.forEach(c=>{
+    const zone=s[c.text]||'bank';
+    const el=document.createElement('div');
+    const cls=zone==='us'?'in-us':zone==='sov'?'in-b':zone==='both'?'in-both':'';
+    el.className='card'+(cls?' '+cls:''); el.textContent=c.text; el.draggable=true;
+    el.ondragstart=e=>{e.dataTransfer.setData('ct',c.text);e.dataTransfer.setData('ri',String(idx));};
+    const t=zone==='us'?'rzoneUS'+idx:zone==='sov'?'rzoneSOV'+idx:zone==='both'?'rzoneBoth'+idx:'rbank'+idx;
+    const dest=document.getElementById(t); if(dest)dest.appendChild(el);
+  });
+}
+
+function rDrop(e,idx,zone){
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  const text=e.dataTransfer.getData('ct'), ri=parseInt(e.dataTransfer.getData('ri'));
+  if(!text||ri!==idx)return;
+  if(!appState.rStates[idx])appState.rStates[idx]={};
+  appState.rStates[idx][text]=zone; renderReading(idx);
+  document.getElementById('rfeedback'+idx).className='feedback';
+  document.getElementById('rscore'+idx).style.display='none'; autoSave();
+}
+
+function checkReading(idx){
+  const r=readings[idx], s=appState.rStates[idx]||{};
+  let c=0; r.cards.forEach(x=>{if(s[x.text]===x.zone)c++;});
+  const t=r.cards.length, pill=document.getElementById('rscore'+idx), fb=document.getElementById('rfeedback'+idx);
+  pill.textContent=c+' / '+t+' correct'; pill.style.display='inline-block';
+  if(c>=Math.ceil(t*0.7)){
+    fb.textContent=c===t?'Perfect! All phrases are in the right place. Move to the next reading.':'Great job! '+c+'/'+t+' correct — you can move on. Click the next reading tab above.';
+    fb.className='feedback show great'; appState.readingsDone[idx]=true;
+    if(idx<3){appState.rUnlocked[idx+1]=true;updateReadingTabs();}
+    checkAllReadings();
+  } else if(c>=Math.ceil(t*0.4)){fb.textContent='Getting there! You need '+Math.ceil(t*0.7)+' correct to unlock the next reading. Go back to the paragraph for clues.';fb.className='feedback show partial';}
+  else{fb.textContent='Re-read the paragraph carefully. Look for facts about the U.S. only, the Soviet Union only, or things both countries did.';fb.className='feedback show low';}
+  autoSave();
+}
+
+function resetReading(idx){
+  readings[idx].cards.forEach(c=>{if(!appState.rStates[idx])appState.rStates[idx]={};appState.rStates[idx][c.text]='bank';});
+  renderReading(idx); document.getElementById('rfeedback'+idx).className='feedback';
+  document.getElementById('rscore'+idx).style.display='none'; autoSave();
+}
+
+function showReading(idx){
+  if(!appState.rUnlocked[idx])return;
+  appState.currentReading=idx; showReadingQuiet(idx); autoSave();
+}
+
+function showReadingQuiet(idx){
+  document.querySelectorAll('.reading-panel').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById('rpanel'+idx); if(p)p.classList.add('active');
+  updateReadingTabs();
+}
+
+function updateReadingTabs(){
+  readings.forEach((_,idx)=>{
+    const tab=document.getElementById('rtab'+idx); if(!tab)return;
+    tab.className='reading-tab';
+    if(!appState.rUnlocked[idx]){tab.classList.add('locked');tab.onclick=null;}
+    else{
+      tab.onclick=()=>showReading(idx);
+      if(appState.readingsDone[idx])tab.classList.add('completed');
+      if(idx===appState.currentReading)tab.classList.add('active');
+    }
+  });
+}
+
+function checkAllReadings(){
+  if(appState.readingsDone.every(Boolean)) document.getElementById('btn3to4').style.display='inline-block';
+}
+
+/* ══════════ CERTIFICATE ══════════ */
+function drawCert(){
+  const canvas=document.getElementById('certCanvas'); if(!canvas)return;
+  const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
+  const name=document.getElementById('studentName').value.trim()||studentName||'Student';
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#FAFAF8'; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#2C2C2A'; ctx.lineWidth=3; ctx.strokeRect(14,14,w-28,h-28);
+  ctx.strokeStyle='#D3D1C7'; ctx.lineWidth=1; ctx.strokeRect(22,22,w-44,h-44);
+  const acc=(x,y,rx,ry)=>{ctx.strokeStyle='#2C2C2A';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+ry);ctx.lineTo(x,y);ctx.lineTo(x+rx,y);ctx.stroke();};
+  acc(30,30,30,30);acc(w-30,30,-30,30);acc(30,h-30,30,-30);acc(w-30,h-30,-30,-30);
+  ['#185FA5','#3B6D11','#854F0B'].forEach((col,i)=>{ctx.fillStyle=col;ctx.font='18px sans-serif';ctx.fillText('★',60+i*24,78);ctx.fillText('★',w-78+i*24-24,78);});
+  ctx.fillStyle='#2C2C2A';ctx.textAlign='center';
+  ctx.font='500 13px DM Sans, sans-serif';ctx.fillText('CERTIFICATE OF COMPLETION',w/2,90);
+  ctx.strokeStyle='#D3D1C7';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(80,102);ctx.lineTo(w-80,102);ctx.stroke();
+  ctx.fillStyle='#2C2C2A';ctx.font='400 15px DM Sans, sans-serif';ctx.fillText('This certifies that',w/2,145);
+  ctx.font='italic 400 36px Georgia, serif';ctx.fillStyle='#0C447C';ctx.fillText(name,w/2,200);
+  const nm=ctx.measureText(name),ul=Math.min(nm.width+40,500);
+  ctx.strokeStyle='#B5D4F4';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(w/2-ul/2,210);ctx.lineTo(w/2+ul/2,210);ctx.stroke();
+  ctx.fillStyle='#2C2C2A';ctx.font='400 15px DM Sans, sans-serif';ctx.fillText('has successfully completed',w/2,248);
+  ctx.font='600 20px DM Sans, sans-serif';ctx.fillText('Assignment 8E: Compare and Contrast',w/2,280);
+  ctx.font='400 14px DM Sans, sans-serif';ctx.fillStyle='#5F5E5A';ctx.fillText('Cold War — United States vs. Soviet Union',w/2,306);
+  ctx.strokeStyle='#D3D1C7';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(80,328);ctx.lineTo(w-80,328);ctx.stroke();
+  const items=['Vocabulary: Compare & Contrast','Practice: City vs. Countryside','4 readings: Communism, Arms Race, Space Race, Proxy Wars'];
+  items.forEach((item,i)=>{ctx.fillStyle='#3B6D11';ctx.textAlign='center';ctx.fillText('✓',w/2-160,360+i*26);ctx.fillStyle='#444441';ctx.textAlign='left';ctx.fillText(item,w/2-145,360+i*26);});
+  const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  ctx.fillStyle='#888780';ctx.font='400 12px DM Sans, sans-serif';ctx.textAlign='center';ctx.fillText('Completed: '+today,w/2,466);
+  ctx.strokeStyle='#2C2C2A';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(w/2-100,520);ctx.lineTo(w/2+100,520);ctx.stroke();
+  ctx.fillStyle='#888780';ctx.font='400 11px DM Sans, sans-serif';ctx.fillText('Teacher Signature',w/2,535);
+  ctx.fillStyle='#B4B2A9';ctx.font='400 10px DM Sans, sans-serif';ctx.fillText('ELL Level 1 — Intermediate High School',w/2,556);
+}
+
+function downloadCert(){
+  drawCert();
+  const canvas=document.getElementById('certCanvas');
+  const link=document.createElement('a');
+  const name=(document.getElementById('studentName').value.trim()||studentName||'Student');
+  link.download='8E_Certificate_'+name.replace(/\s+/g,'_')+'.png';
+  link.href=canvas.toDataURL('image/png'); link.click();
+}
+</script>
+</body>
+</html>
